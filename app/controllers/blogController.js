@@ -1,8 +1,15 @@
 const Blog = require("../models/blog.model");
 const { response, fileManager } = require("../utils");
+const cloudinary = require("cloudinary");
+const dotenv = require("dotenv");
 
+dotenv.config();
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
 const LoadArticleLists = async (req, res) => {
-  const params = req.query;
   try {
     const articles = (await Blog.find({}).exec()) ?? [];
     return response(res, { articles }, {}, 200);
@@ -13,44 +20,46 @@ const LoadArticleLists = async (req, res) => {
 
 const createArticle = async (req, res) => {
   try {
-    let params = { ...req.body };
-    const file = req.file;
+    cloudinary.uploader.upload(req.file.path, async function (result) {
+      req.body.file = result.secure_url;
+      let params = { ...req.body };
 
-    const article = await Blog.findOne({
-      $and: [
-        { title: params.title },
-        { firstname: params.firstname, lastname: params.lastname },
-      ],
-    });
-    if (article !== null) {
-      return response(res, {}, {}, 500, "It is already posted article.");
-    } else {
-      const newArticle = new Blog({
-        title: params.title,
-        subTitle: params.subTitle,
-        content: params.content,
-        firstname: params.firstname,
-        lastname: params.lastname,
-        image: file.filename,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      const article = await Blog.findOne({
+        $and: [
+          { title: params.title },
+          { firstname: params.firstname, lastname: params.lastname },
+        ],
       });
-
-      newArticle
-        .save()
-        .then((item) => {
-          return response(res, {}, {}, 200, "Success");
-        })
-        .catch((error) => {
-          return response(
-            res,
-            {},
-            { error },
-            500,
-            "unable to save to database"
-          );
+      if (article !== null) {
+        return response(res, {}, {}, 500, "It is already posted article.");
+      } else {
+        const newArticle = new Blog({
+          title: params.title,
+          subTitle: params.subTitle,
+          content: params.content,
+          firstname: params.firstname,
+          lastname: params.lastname,
+          image: params.file,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         });
-    }
+
+        newArticle
+          .save()
+          .then((item) => {
+            return response(res, {}, {}, 200, "Success");
+          })
+          .catch((error) => {
+            return response(
+              res,
+              {},
+              { error },
+              500,
+              "unable to save to database"
+            );
+          });
+      }
+    });
   } catch (error) {
     return response(res, {}, error, 500, "Something went wrong!");
   }

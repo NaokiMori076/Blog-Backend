@@ -4,9 +4,9 @@ const BlogController = require("../controllers/blogController");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/blog/"); // Specify the destination folder for uploaded files
-  },
+  // destination: (req, file, cb) => {
+  //   cb(null, "uploads/blog/"); // Specify the destination folder for uploaded files
+  // },
   filename: (req, file, cb) => {
     cb(
       null,
