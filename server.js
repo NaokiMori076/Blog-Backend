@@ -7,7 +7,6 @@ const app = express();
 const path = require("path");
 const routes = require("./app/routes");
 
-app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
