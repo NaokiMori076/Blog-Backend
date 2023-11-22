@@ -4,7 +4,8 @@ const schema = new Schema(
   {
     title: String,
     subTitle: String,
-    username: String,
+    firstname: String,
+    lastname: String,
     content: String,
     image: String,
     createdAt: Date,

@@ -17,7 +17,10 @@ const createArticle = async (req, res) => {
     const file = req.file;
 
     const article = await Blog.findOne({
-      $and: [{ title: params.title }, { username: params.username }],
+      $and: [
+        { title: params.title },
+        { firstname: params.firstname, lastname: params.lastname },
+      ],
     });
     if (article !== null) {
       return response(res, {}, {}, 500, "It is already posted article.");
@@ -26,7 +29,8 @@ const createArticle = async (req, res) => {
         title: params.title,
         subTitle: params.subTitle,
         content: params.content,
-        username: params.username,
+        firstname: params.firstname,
+        lastname: params.lastname,
         image: file.filename,
         createdAt: new Date(),
         updatedAt: new Date(),
