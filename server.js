@@ -31,7 +31,9 @@ connectDB()
   });
 
 async function connectDB() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/blog");
+  await mongoose.connect(
+    "mongodb+srv://naokimori076:YeYye7fQLuCsNGdx@cluster0.phjmazt.mongodb.net/"
+  );
 }
 
 // simple route
