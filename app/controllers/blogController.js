@@ -11,7 +11,7 @@ cloudinary.config({
 });
 const LoadArticleLists = async (req, res) => {
   try {
-    const articles = (await Blog.find({}).exec()) ?? [];
+    const articles = (await Blog.find({}).sort({ _id: -1 }).exec()) ?? [];
     return response(res, { articles }, {}, 200);
   } catch (error) {
     return response(res, {}, error, 500, "Something went wrong!");
